@@ -1,0 +1,16 @@
+---
+- name: Create application base path
+  file:
+    path: "{{ docker_compose_base }}/{{ docker_app_name }}/"
+    state: directory
+- name: Create docker-compose.yml configuration file
+  template: 
+    src: "{{ docker_compose_template }}"
+    dest: "{{ docker_compose_base }}/{{ docker_app_name }}/docker-compose.yml"
+    mode: 0644
+- name: Create additional configuration files
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ docker_compose_base }}/{{ docker_app_name }}/{{ item.destination }}"
+  with_items: "{{ docker_compose_files }}"
+  

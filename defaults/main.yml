@@ -1,0 +1,5 @@
+---
+docker_compose_base: /srv/docker
+docker_compose_version: 1.28.4
+docker_compose_template: ""
+docker_compose_files: []
