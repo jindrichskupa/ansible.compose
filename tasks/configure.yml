@@ -8,7 +8,7 @@
     path: "{{ docker_compose_base }}/{{ docker_app_name }}/{{ item }}"
     state: directory
     recurse: yes
-  with_items: "{{ docker_compose_files }}"
+  with_items: "{{ docker_compose_dirs }}"
 
 - name: Create docker-compose.yml configuration file
   template:
