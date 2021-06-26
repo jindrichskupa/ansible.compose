@@ -1,0 +1,15 @@
+---
+- name: Create docker-compose systemd unit
+  template:
+    src: "docker-compose.service.j2"
+    dest: "/etc/systemd/system/{{ docker_app_name }}-docker-compose.service"
+  notify:
+    - reload systemd
+  when: docker_systemd
+
+
+- name: Enable docker-compose via systemd
+  systemd:
+    name: "{{ docker_app_name }}-docker-compose"
+    enabled: true
+  when: docker_systemd

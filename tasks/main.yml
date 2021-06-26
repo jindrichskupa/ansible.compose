@@ -1,2 +1,3 @@
 ---
 - include: configure.yml
+- include: systemd.yml

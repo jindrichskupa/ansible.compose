@@ -1,2 +1,6 @@
 ---
 # handlers file for compose
+- name: reload systemd
+  systemd:
+    name: "{{ docker_app_name }}-docker-compose"
+    daemon_reload: yes

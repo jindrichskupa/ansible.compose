@@ -1,38 +1,95 @@
-Role Name
+Docker Compose Ansible Role
 =========
 
-A brief description of the role goes here.
+Creates `docker-compose.yml`, (config) files and directories. Creates systemd units for composes.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
-
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+* debian based distribution
+* docker installed, you can use [this](https://galaxy.ansible.com/jindrichskupa/ansible_docker) role
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```yaml
+---
+- name: Manage Docker Application Server
+  hosts: docker.example.com
+  remote_user: ansible
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - role: jindrichskupa.ansible_docker
+    - role: jindrichskupa.ansible_compose
+      vars:
+        # project/directory/unit name
+        docker_app_name: promtail
+        # docker compose base, default: `/srv/docker`
+        docker_compose_base: /srv/docker
+        # docker compose version, default: 1.29.2
+        docker_compose_version: 1.29.2
+        # template of `docker-compose.yml`
+        docker_compose_template: compose/promtail/docker-compose.yml
+        # create systemd unit, default: false
+        docker_systemd: true
+        # custom/generated files, like config files
+        docker_compose_files:
+          - template: compose/promtail/config.yaml
+            destination: promtail/config.yaml
+        # will create empty dirs in project directory
+        docker_compose_dirs:
+          - promtail
+        # custom variables used in templates place here:
+        docker_image_backend: grafana/promtail:master
+    # real life example
+    - role: jindrichskupa.ansible_compose
+      vars:
+        docker_app_name: app1
+        docker_compose_template: compose/app1/docker-compose.yml
+        docker_compose_files:
+          - template: compose/app1//Dockerfile
+            destination: app1/Dockerfile
+          - template: compose/app1/entrypoint.sh
+            destination: app1/entrypoint.sh
+        docker_compose_dirs:
+          - data
+          - config
+        docker_compose_database_user: app1_user
+        docker_compose_database_pass: !vault |
+                  $ANSIBLE_VAULT;1.1;AES256
+                  35626337626164313637383463396533366465626466393639316565393231393637
+        docker_compose_database_host: postgres
+```
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Template Example
+----------------
+
+```yaml
+version: "3"
+services:
+  promtail:
+    image: {{ docker_image_backend }}
+    volumes:
+      - $PWD/promtail:/etc/promtail
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    command: "-config.file=/etc/promtail/config.yaml"
+{% raw %}
+    logging:
+      options:
+        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+{% endraw %}
+    restart: always
+```
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Jindrich Skupa
