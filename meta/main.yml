@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: compose
   author: Jindrich Skupa
   description: Role for docker-compose management via ansible
   company: Enrian Partner a.s.
@@ -15,7 +16,7 @@ galaxy_info:
         - buster
   galaxy_tags:
     - docker
-    - "docker-compose"
+    - debian
     - compose
     - composer
 

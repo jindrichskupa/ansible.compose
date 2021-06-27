@@ -3,6 +3,7 @@
   file:
     path: "{{ docker_compose_base }}/{{ docker_app_name }}/"
     state: directory
+
 - name: Create application directories
   file:
     path: "{{ docker_compose_base }}/{{ docker_app_name }}/{{ item }}"
