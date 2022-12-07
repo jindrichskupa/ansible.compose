@@ -34,6 +34,11 @@ Example Playbook
         docker_compose_template: compose/promtail/docker-compose.yml
         # create systemd unit, default: false
         docker_systemd: true
+        # specify systemd dependencies
+        docker_systemd_requires: container1-docker-compose.service
+        docker_systemd_before: rsync-files.service
+        docker_systemd_after: bind.service
+        docker_systemd_wants: sshd.service
         # custom/generated files, like config files
         docker_compose_files:
           - template: compose/promtail/config.yaml

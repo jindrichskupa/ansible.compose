@@ -1,7 +1,19 @@
 [Unit]
 Description={{ docker_app_name }} service with docker compose
+{% if docker_systemd_before is defined %}
+Before={{ docker_systemd_before }}
+{% endif %}
 Requires=docker.service
+{% if docker_systemd_requires is defined %}
+Requires={{ docker_systemd_requires }}
+{% endif %}
+{% if docker_systemd_wants is defined %}
+Wants={{ docker_systemd_wants }}
+{% endif %}
 After=docker.service
+{% if docker_systemd_after is defined %}
+After={{ docker_systemd_after }}
+{% endif %}
 
 [Service]
 Type=oneshot
